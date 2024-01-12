@@ -1,4 +1,9 @@
 # Create your tests here.
+"""
+    Create separate TestClass for each model or view
+    Create separate test method for each condition to test
+    Name test methods to describe their function
+"""
 import datetime
 
 from django.test import TestCase
@@ -7,7 +12,7 @@ from django.urls import reverse
 
 from .models import Question
 
-# run test in terminal using "python3 manage.py test polls"
+# run tests in terminal using "python3 manage.py test polls"
 class QuestionModelTests(TestCase):
     def test_was_published_recently_with_future_question(self):
         # was_published_recently() returns False for questions whose pub_date is in the future
@@ -66,3 +71,18 @@ class QuestionIndexViewTests(TestCase):
         question2 = create_question(question_text="Past question 2.", days=-5)
         response = self.client.get(reverse("polls:index"))
         self.assertQuerySetEqual(response.context["latest_question_list"], [question2, question1],)
+
+class QuestionDetailViewTests(TestCase):
+    def test_future_question(self):
+        # Return 404 for future questions
+        future_question = create_question(question_text="Future question.", days=5)
+        url = reverse("polls:detail", args=(future_question.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_past_question(self):
+        # Display detail view of past question
+        past_question = create_question(question_text="Past Question.", days=-5)
+        url = reverse("polls:detail", args=(past_question.id,))
+        response = self.client.get(url)
+        self.assertContains(response, past_question.question_text)
