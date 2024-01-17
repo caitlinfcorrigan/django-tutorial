@@ -55,7 +55,8 @@ ROOT_URLCONF = 'djTutorial.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # Add a search path to DIRS to modify the pre-built templates like Admin
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
